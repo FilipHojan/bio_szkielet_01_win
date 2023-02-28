@@ -52,11 +52,11 @@ void freeOpenGLProgram(GLFWwindow* window) {
 }
 
 //Procedura rysująca zawartość sceny
-void drawScene(GLFWwindow* window) {
+void drawScene(GLFWwindow* window, float angle) {
 	glClearColor(184.0f / 255.0f, 213.0f / 255.0f, 238.0f / 255.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glm::mat4 M = glm::mat4(1.0f);
+	glm::mat4 M = glm::mat4(1.0f);	M = glm::rotate(M, angle, glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 P = glm::perspective(
 		glm::radians(50.0f), 1.0f, 1.0f, 50.0f);
 
@@ -105,12 +105,16 @@ int main(void)
 	}
 
 	initOpenGLProgram(window); //Operacje inicjujące
-
+	
+	
+	float angle = 0;
+	glfwSetTime(0);
 	//Główna pętla
 	while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
 	{
-
-		drawScene(window); //Wykonaj procedurę rysującą
+		angle += speed * glfwGetTime();
+		glfwSetTime(0);
+		drawScene(window, angle); //Wykonaj procedurę rysującą
 		glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
 	}
 
