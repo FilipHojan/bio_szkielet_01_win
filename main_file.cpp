@@ -31,6 +31,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "lodepng.h"
 #include "shaderprogram.h"
 
+float speed=3.14; // [radiany/s]
+
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
 	fputs(description, stderr);
@@ -51,7 +53,26 @@ void freeOpenGLProgram(GLFWwindow* window) {
 
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window) {
-	//************Tutaj umieszczaj kod rysujący obraz******************l
+	glClearColor(184.0f / 255.0f, 213.0f / 255.0f, 238.0f / 255.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glm::mat4 M = glm::mat4(1.0f);
+	glm::mat4 P = glm::perspective(
+		glm::radians(50.0f), 1.0f, 1.0f, 50.0f);
+
+	glm::mat4 V = glm::lookAt(
+		glm::vec3(0.0f, 0.0f, -5.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
+	spLambert->use();//Aktywacja programu cieniującego
+	glUniform4f(spLambert->u("color"), 0, 1, 0, 1);
+	glUniformMatrix4fv(spLambert->u("P"), 1, false, glm::value_ptr(P));
+	glUniformMatrix4fv(spLambert->u("V"), 1, false, glm::value_ptr(V));
+	glUniformMatrix4fv(spLambert->u("M"), 1, false, glm::value_ptr(M));
+	Models::torus.drawWire();
+
+	glfwSwapBuffers(window);
 }
 
 
